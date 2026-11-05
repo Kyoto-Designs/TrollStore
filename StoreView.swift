@@ -39,41 +39,68 @@ struct StoreView: View {
                 }
             }
             Spacer()
-            Image(systemName: "bell.badge.fill")
-                .font(.title3)
+            Text("DEMO")
+                .font(.system(size: 10, weight: .black, design: .rounded))
+                .tracking(1)
                 .foregroundStyle(.woopyMint)
-                .frame(width: 42, height: 42)
-                .background(.white.opacity(0.08), in: Circle())
+                .padding(.horizontal, 11)
+                .padding(.vertical, 8)
+                .background(.white.opacity(0.08), in: Capsule())
         }
         .padding(.top, 6)
     }
 
     private var hero: some View {
-        HStack(spacing: 18) {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Your space,\nyour apps.")
-                    .font(.system(size: 31, weight: .heavy, design: .rounded))
-                    .lineSpacing(-2)
-                Text("Discover thoughtfully picked apps from sources you trust.")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-                Label("Trusted sources only", systemImage: "checkmark.seal.fill")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.woopyInk)
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 7)
-                    .background(.woopyMint, in: Capsule())
-            }
-            Spacer(minLength: 0)
-            WoopyMark(size: 86)
-                .rotationEffect(.degrees(8))
+        ViewThatFits(in: .horizontal) {
+            heroContent(compact: false)
+            heroContent(compact: true)
         }
         .padding(22)
         .background(
             LinearGradient(colors: [.woopyIndigo, .woopyBlue.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing),
             in: RoundedRectangle(cornerRadius: 30, style: .continuous)
         )
+    }
+
+    @ViewBuilder
+    private func heroContent(compact: Bool) -> some View {
+        Group {
+            if compact {
+                VStack(alignment: .leading, spacing: 18) {
+                    heroCopy
+                    HStack {
+                        Spacer()
+                        WoopyMark(size: 72)
+                    }
+                }
+            } else {
+                HStack(spacing: 18) {
+                    heroCopy
+                    Spacer(minLength: 0)
+                    WoopyMark(size: 86)
+                        .rotationEffect(.degrees(8))
+                }
+            }
+        }
+    }
+
+    private var heroCopy: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Your space,\nyour apps.")
+                .font(.system(.title, design: .rounded, weight: .heavy))
+                .lineSpacing(-2)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("Discover thoughtfully picked apps from sources you trust.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.72))
+                .fixedSize(horizontal: false, vertical: true)
+            Label("Interactive prototype — no downloads", systemImage: "info.circle.fill")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.woopyInk)
+                .padding(.horizontal, 11)
+                .padding(.vertical, 7)
+                .background(.woopyMint, in: Capsule())
+        }
     }
 
     private var categoryPicker: some View {
@@ -89,6 +116,10 @@ struct StoreView: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .background(library.selectedCategory == category ? .woopyMint : .white.opacity(0.09), in: Capsule())
+                            .accessibilityLabel("\(category.rawValue) category")
+                            .accessibilityValue(library.selectedCategory == category ? "Selected" : "Not selected")
+                            .accessibilityAddTraits(library.selectedCategory == category ? .isSelected : [])
+                            .buttonStyle(WoopyPressStyle())
                     }
                 }
             }
@@ -96,9 +127,26 @@ struct StoreView: View {
     }
 
     private var appGrid: some View {
-        LazyVStack(spacing: 13) {
-            ForEach(library.filteredApps) { app in
-                AppCard(app: app) { library.install(app) }
+        Group {
+            if library.filteredApps.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.woopyMint)
+                    Text("No matching apps")
+                        .font(.headline.weight(.bold))
+                    Text("Try a different name or category.")
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.64))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 42)
+            } else {
+                LazyVStack(spacing: 13) {
+                    ForEach(library.filteredApps) { app in
+                        AppCard(app: app) { library.install(app) }
+                    }
+                }
             }
         }
     }
@@ -135,9 +183,29 @@ private struct AppCard: View {
             .frame(width: 64, height: 34)
             .background(app.status == .installed ? .woopyMint.opacity(0.65) : .woopyMint, in: Capsule())
             .disabled(app.status != .ready)
+            .accessibilityLabel(accessibilityLabel)
+            .accessibilityHint("Demo only. This changes the card state and does not download an app.")
+            .buttonStyle(WoopyPressStyle())
         }
         .padding(13)
         .background(.white.opacity(0.075), in: RoundedRectangle(cornerRadius: 21, style: .continuous))
+    }
+
+    private var accessibilityLabel: String {
+        switch app.status {
+        case .ready: "Get \(app.name) demo"
+        case .installing: "Installing \(app.name) demo"
+        case .installed: "\(app.name) demo installed"
+        }
+    }
+}
+
+private struct WoopyPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 

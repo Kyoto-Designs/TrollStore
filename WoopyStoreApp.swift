@@ -48,7 +48,7 @@ enum InstallStatus: Equatable {
     case ready, installing, installed
 }
 
-struct StoreApp: Identifiable, Equatable {
+struct StoreApp: Identifiable {
     let id = UUID()
     let name: String
     let subtitle: String

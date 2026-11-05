@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#09111c" />
+  <meta name="description" content="A visual demo for the WoopyStore iOS app-library experience." />
+  <title>WoopyStore — App library demo</title>
+  <style>
+    :root {
+      --ink: #09111c;
+      --surface: #101d2d;
+      --surface-2: #17273a;
+      --line: rgba(255,255,255,.1);
+      --muted: #94a7bd;
+      --mint: #33e9b5;
+      --teal: #119d9e;
+      --blue: #4f81ff;
+      --yellow: #f5cc50;
+      --white: #f7fbff;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    html { min-width: 320px; background: var(--ink); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      background:
+        radial-gradient(42rem 35rem at 100% -10%, rgba(73, 122, 255, .24), transparent 60%),
+        radial-gradient(36rem 25rem at -5% 85%, rgba(19, 194, 153, .14), transparent 65%),
+        var(--ink);
+      font-family: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 27px 0 46px; }
+
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 31px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--white); text-decoration: none; }
+    .logo {
+      display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 auto;
+      border: 2px solid rgba(255,255,255,.2); border-radius: 15px;
+      color: #06171a; background: linear-gradient(135deg, var(--mint), #34c5c8 65%, #4c7cff);
+      box-shadow: 0 10px 28px rgba(47, 237, 181, .22); font-size: 23px; transform: rotate(-4deg);
+    }
+    .wordmark { display: grid; line-height: 1; gap: 4px; }
+    .wordmark strong { font-size: 22px; letter-spacing: -.9px; }
+    .wordmark span { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: 1.5px; }
+    .nav { display: flex; align-items: center; gap: 11px; }
+    .status { display: inline-flex; gap: 8px; align-items: center; padding: 8px 11px; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .status::before { width: 7px; height: 7px; content: ""; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(51,233,181,.11); }
+    .demo-badge { display: grid; place-items: center; min-width: 38px; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 99px; color: var(--white); background: rgba(255,255,255,.07); font-size: 10px; font-weight: 900; letter-spacing: .8px; }
+
+    .hero { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(190px, .75fr); gap: 28px; min-height: 264px; padding: clamp(25px, 4vw, 44px); border: 1px solid rgba(164, 192, 255, .24); border-radius: 32px; background: linear-gradient(125deg, #3330a1, #285fca 58%, #4c8bfa); box-shadow: 0 24px 60px rgba(0,0,0,.22); }
+    .hero::after { position: absolute; top: -170px; right: -105px; width: 390px; height: 390px; content: ""; border: 48px solid rgba(255,255,255,.08); border-radius: 50%; }
+    .hero-copy { position: relative; z-index: 1; align-self: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #c9ffe9; font-size: 11px; font-weight: 900; letter-spacing: 1.25px; }
+    .eyebrow::before { width: 8px; height: 8px; content: ""; border-radius: 3px; background: var(--mint); transform: rotate(45deg); }
+    h1 { max-width: 540px; margin: 14px 0 10px; font-size: clamp(36px, 5vw, 57px); letter-spacing: -2.8px; line-height: .94; }
+    .hero p { max-width: 450px; margin: 0; color: #e2edff; font-size: 15px; line-height: 1.5; }
+    .trust { display: inline-flex; align-items: center; gap: 7px; margin-top: 19px; padding: 8px 12px; border-radius: 99px; color: #102129; background: var(--mint); font-size: 12px; font-weight: 900; }
+    .trust span { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; color: var(--mint); background: #102129; font-size: 11px; }
+
+    .orb-wrap { position: relative; z-index: 1; display: grid; place-items: center; min-height: 178px; }
+    .orb { position: relative; display: grid; place-items: center; width: 152px; height: 152px; border: 10px solid rgba(255,255,255,.12); border-radius: 44px; color: #07131c; background: linear-gradient(145deg, #51ffcd, #37bdc7 68%, #5f83f9); box-shadow: 0 26px 38px rgba(11, 26, 104, .28), inset 0 2px rgba(255,255,255,.45); transform: rotate(8deg); }
+    .orb::before { position: absolute; inset: 13px; content: ""; border: 2px dashed rgba(4, 49, 59, .24); border-radius: 31px; }
+    .orb > span { font-size: 64px; transform: rotate(-8deg); filter: drop-shadow(0 2px rgba(255,255,255,.38)); }
+    .spark { position: absolute; display: block; background: #fff; transform: rotate(45deg); }
+    .spark.a { width: 13px; height: 13px; top: 18px; right: 23px; }
+    .spark.b { width: 9px; height: 9px; bottom: 18px; left: 13px; background: var(--yellow); }
+
+    .controls { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-top: 35px; }
+    h2 { margin: 0 0 11px; font-size: 20px; letter-spacing: -.6px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 9px 14px; border: 1px solid var(--line); border-radius: 99px; color: #bfcbdb; background: rgba(255,255,255,.055); font-size: 13px; font-weight: 800; transition: .2s ease; }
+    .chip:hover { transform: translateY(-1px); background: rgba(255,255,255,.1); }
+    .chip[aria-pressed="true"] { border-color: transparent; color: #06161b; background: var(--mint); box-shadow: 0 7px 18px rgba(51,233,181,.15); }
+    .search { position: relative; width: min(100%, 265px); }
+    .search svg { position: absolute; top: 50%; left: 14px; width: 17px; height: 17px; color: var(--muted); pointer-events: none; transform: translateY(-50%); }
+    .search input { width: 100%; height: 43px; padding: 0 13px 0 40px; border: 1px solid var(--line); border-radius: 13px; outline: none; color: var(--white); background: rgba(255,255,255,.06); font-size: 13px; font-weight: 650; transition: .2s ease; }
+    .search input::placeholder { color: #71849b; }
+    .search input:focus { border-color: var(--mint); box-shadow: 0 0 0 4px rgba(51,233,181,.1); }
+
+    .apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+    .app { display: flex; align-items: center; gap: 14px; min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 22px; background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.035)); box-shadow: 0 11px 26px rgba(0,0,0,.1); transition: transform .2s ease, border-color .2s ease; }
+    .app:hover { border-color: rgba(255,255,255,.19); transform: translateY(-2px); }
+    .app[hidden] { display: none; }
+    .app-icon { display: grid; place-items: center; width: 58px; height: 58px; flex: 0 0 auto; border-radius: 18px; color: #fff; font-size: 29px; box-shadow: inset 0 1px rgba(255,255,255,.35); }
+    .c-mint { background: linear-gradient(145deg, #4eebbb, #158d91); }
+    .c-blue { background: linear-gradient(145deg, #6793ff, #3d3fc2); }
+    .c-coral { background: linear-gradient(145deg, #ff897a, #ef4d68); }
+    .c-gold { background: linear-gradient(145deg, #ffdc57, #e57539); }
+    .c-pink { background: linear-gradient(145deg, #f46bb6, #7953e5); }
+    .app-info { min-width: 0; }
+    .app-name { overflow: hidden; margin: 0; font-size: 15px; font-weight: 900; letter-spacing: -.25px; text-overflow: ellipsis; white-space: nowrap; }
+    .app-desc { overflow: hidden; margin: 4px 0 6px; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .app-tag { color: var(--mint); font-size: 9px; font-weight: 950; letter-spacing: .95px; }
+    .get { min-width: 58px; height: 33px; margin-left: auto; padding: 0 11px; border: 0; border-radius: 99px; color: #081619; background: var(--mint); font-size: 11px; font-weight: 950; letter-spacing: .35px; transition: .2s ease; }
+    .get:hover:not(:disabled) { transform: scale(1.04); background: #66ffcf; }
+    .get:disabled { cursor: default; }
+    .get.loading { color: transparent; background: #abf7df; }
+    .get.loading::after { display: block; width: 13px; height: 13px; margin: auto; content: ""; border: 2px solid rgba(5, 55, 48, .3); border-top-color: #053730; border-radius: 50%; animation: spin .7s linear infinite; }
+    .get.done { color: #092924; background: #91eac9; }
+    .empty { grid-column: 1 / -1; padding: 40px 20px; border: 1px dashed var(--line); border-radius: 22px; color: var(--muted); text-align: center; }
+    .empty[hidden] { display: none; }
+
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 30px; padding-top: 21px; border-top: 1px solid var(--line); color: #71839a; font-size: 11px; line-height: 1.5; }
+    footer strong { color: #b9c8d8; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 24px, 550px); padding-top: 18px; }
+      .status { display: none; }
+      .hero { grid-template-columns: 1fr; min-height: 0; }
+      .orb-wrap { position: absolute; right: -28px; bottom: -47px; opacity: .38; transform: scale(.8); }
+      .hero-copy { max-width: 85%; }
+      .controls { align-items: stretch; flex-direction: column; }
+      .search { width: 100%; }
+      .apps { grid-template-columns: 1fr; }
+      footer { align-items: start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="WoopyStore home">
+        <span class="logo" aria-hidden="true">✦</span>
+        <span class="wordmark"><strong>WoopyStore</strong><span>YOUR APP LIBRARY</span></span>
+      </a>
+      <nav class="nav" aria-label="Account navigation">
+        <span class="status">Library ready</span>
+        <span class="demo-badge">DEMO</span>
+      </nav>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">MADE FOR YOUR SPACE</span>
+        <h1 id="hero-title">Your space,<br />your apps.</h1>
+        <p>Discover thoughtfully picked apps from sources you trust, in one calm and colorful library.</p>
+        <span class="trust"><span>✓</span> Trusted sources only</span>
+      </div>
+      <div class="orb-wrap" aria-hidden="true"><div class="orb"><span>✦</span><i class="spark a"></i><i class="spark b"></i></div></div>
+    </section>
+
+    <section class="controls" aria-labelledby="browse-title">
+      <div>
+        <h2 id="browse-title">Browse the library</h2>
+        <div class="chips" role="group" aria-label="Filter by category">
+          <button class="chip" type="button" data-category="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-category="games" aria-pressed="false">Games</button>
+          <button class="chip" type="button" data-category="work" aria-pressed="false">Work</button>
+          <button class="chip" type="button" data-category="utilities" aria-pressed="false">Utilities</button>
+        </div>
+      </div>
+      <label class="search"><span class="visually-hidden">Search apps</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+        <input id="search" type="search" placeholder="Search apps" autocomplete="off" />
+      </label>
+    </section>
+
+    <section class="apps" aria-live="polite" aria-label="Available apps">
+      <article class="app" data-category="work" data-search="pocket notes notes work writing">
+        <div class="app-icon c-mint" aria-hidden="true">▤</div><div class="app-info"><h3 class="app-name">Pocket Notes</h3><p class="app-desc">Notes that stay out of your way</p><span class="app-tag">WORK</span></div><button class="get" type="button" aria-label="Add Pocket Notes to demo library">GET</button>
+      </article>
+      <article class="app" data-category="utilities" data-search="sora weather sun forecast utilities">
+        <div class="app-icon c-blue" aria-hidden="true">☁</div><div class="app-info"><h3 class="app-name">Sora Weather</h3><p class="app-desc">A calmer way to check the sky</p><span class="app-tag">UTILITIES</span></div><button class="get" type="button" aria-label="Add Sora Weather to demo library">GET</button>
+      </article>
+      <article class="app" data-category="games" data-search="arcade drift games race driving">
+        <div class="app-icon c-coral" aria-hidden="true">⌁</div><div class="app-info"><h3 class="app-name">Arcade Drift</h3><p class="app-desc">Quick races. No clutter.</p><span class="app-tag">GAMES</span></div><button class="get" type="button" aria-label="Add Arcade Drift to demo library">GET</button>
+      </article>
+      <article class="app" data-category="work" data-search="daylight focus timer work productivity">
+        <div class="app-icon c-gold" aria-hidden="true">☀</div><div class="app-info"><h3 class="app-name">Daylight</h3><p class="app-desc">Focus timer and daily rhythm</p><span class="app-tag">WORK</span></div><button class="get" type="button" aria-label="Add Daylight to demo library">GET</button>
+      </article>
+      <article class="app" data-category="utilities" data-search="pixel post photo postcard utilities image">
+        <div class="app-icon c-pink" aria-hidden="true">▧</div><div class="app-info"><h3 class="app-name">Pixel Post</h3><p class="app-desc">Tiny postcards for friends</p><span class="app-tag">UTILITIES</span></div><button class="get" type="button" aria-label="Add Pixel Post to demo library">GET</button>
+      </article>
+      <p class="empty" hidden>No apps match that search. Try another word or category.</p>
+    </section>
+
+    <footer>
+      <span><strong>WoopyStore visual demo</strong> · A user-interface concept, not an app distribution service.</span>
+      <span>Designed for clarity · Built without external dependencies</span>
+    </footer>
+  </main>
+  <script>
+    (() => {
+      const chips = [...document.querySelectorAll('.chip')];
+      const apps = [...document.querySelectorAll('.app')];
+      const search = document.querySelector('#search');
+      const empty = document.querySelector('.empty');
+      let category = 'all';
+
+      function filter() {
+        const query = search.value.trim().toLowerCase();
+        let shown = 0;
+        apps.forEach(app => {
+          const matchesCategory = category === 'all' || app.dataset.category === category;
+          const matchesSearch = !query || app.dataset.search.includes(query);
+          app.hidden = !(matchesCategory && matchesSearch);
+          if (!app.hidden) shown += 1;
+        });
+        empty.hidden = shown !== 0;
+      }
+
+      chips.forEach(chip => chip.addEventListener('click', () => {
+        category = chip.dataset.category;
+        chips.forEach(item => item.setAttribute('aria-pressed', String(item === chip)));
+        filter();
+      }));
+      search.addEventListener('input', filter);
+
+      document.querySelectorAll('.get').forEach(button => button.addEventListener('click', () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        button.classList.add('loading');
+        button.setAttribute('aria-busy', 'true');
+        button.textContent = 'Adding';
+        window.setTimeout(() => {
+          button.classList.remove('loading');
+          button.classList.add('done');
+          button.removeAttribute('aria-busy');
+          button.textContent = '✓';
+          const name = button.closest('.app').querySelector('.app-name').textContent;
+          button.setAttribute('aria-label', `${name} added to demo library`);
+        }, 720);
+      }));
+    })();
+  </script>
+</body>
+</html>
